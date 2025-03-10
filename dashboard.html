@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"u
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Hashed Identity Message Authentication - Dashboard</title>
+    <link rel="stylesheet" href="stylesdashboard.css">
+    <script src="script.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        input {
+            width: 1000px;
+            height: 100px;
+            color: rgb(0, 0, 0);
+            background-color: rgba(255, 255, 255, 0.879);
+            font-size: 20px;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Verification result styles */
+        .verification-result.success {
+            color: green;
+        }
+
+        .verification-result.failure {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header>
+            <h1>Secure Hashed Identity Message Authentication</h1>
+            <nav>
+                <ul>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="documentation.html">Documentation</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="index.html" class="logout-button">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- Account Overview Section -->
+        <section class="account-overview">
+            <h2>Account Overview</h2>
+            <div class="card">
+                <p><strong>Username:</strong> eshwar</p>
+                <p><strong>Email:</strong> eshwar@example.com</p>
+                <p><strong>Security Status:</strong> <span style="color: green;">2FA Enabled</span></p>
+                <p><strong>Last Login:</strong> January 8, 2025, 10:15 AM</p>
+            </div>
+        </section>
+
+        <!-- Plain Text to Cipher Text Converter Section -->
+        <section class="converter">
+            <div class="card">
+                <h1>Secure Hashed Identity Message Authentication</h1>
+                <h2>Sender</h2>
+                <form id="hmacForm">
+                    <div>
+                        <label for="message">Message:</label>
+                        <input type="text" id="message" name="message">
+                    </div><br>
+                    <div>
+                        <label for="key">Key:</label>
+                        <input type="text" id="key" name="key">
+                    </div><br>
+                    <button type="button" onclick="generateHMAC()">Generate SHIMA</button><br>
+                </form>
+                <p>SHIMA CODE: <span id="hmacMessage"></span></p>
+
+                <h2>Receiver</h2>
+                <form id="verifyForm">
+                    <div>
+                        <label for="receivedMessage">Received Message:</label>
+                        <input type="text" id="receivedMessage" name="receivedMessage">
+                    </div><br>
+                    <div>
+                        <label for="receivedKey">Received Key:</label>
+                        <input type="text" id="receivedKey" name="receivedKey">
+                    </div><br>
+                    <div>
+                        <label for="receivedHMAC">Received CODE:</label>
+                        <input type="text" id="receivedHMAC" name="receivedHMAC">
+                    </div><br>
+                    <button type="button" onclick="verifyHMAC()">Verify SHIMA</button><br>
+                </form>
+                <p id="verificationResult"></p>
+            </div>
+        </section>
+
+        <!-- Recent Activity Section -->
+        <section class="recent-activity">
+            <div class="card">
+                <h1>Recent Activity</h1>
+                <div class="activity-feed" id="activityFeed">
+                    <!-- Dynamic activities will be inserted here -->
+                </div>
+            </div>
+
+            <script>
+                const activities = [
+                    { time: '2 minutes ago', description: 'User eshwar generated a code.' },
+                    { time: '30 minutes ago', description: 'User eshwar generated a code.' },
+                    { time: '1 hour ago', description: 'User eshwar generated a code.' }
+                ];
+
+                function displayActivities() {
+                    const activityFeed = document.getElementById('activityFeed');
+                    activityFeed.innerHTML = ''; // Clear existing content
+
+                    activities.forEach(activity => {
+                        const activityElement = document.createElement('div');
+                        activityElement.classList.add('activity');
+
+                        const timeElement = document.createElement('span');
+                        timeElement.classList.add('time');
+                        timeElement.textContent = activity.time;
+
+                        const descriptionElement = document.createElement('p');
+                        descriptionElement.classList.add('description');
+                        descriptionElement.textContent = activity.description;
+
+                        activityElement.appendChild(timeElement);
+                        activityElement.appendChild(descriptionElement);
+
+                        activityFeed.appendChild(activityElement);
+                    });
+                }
+
+                function addActivity(time, description) {
+                    activities.unshift({ time, description }); // Add new activity to the beginning
+                    displayActivities();
+                }
+
+                // Initial display of activities
+                displayActivities();
+
+                // Example of adding a new activity dynamically after 5 seconds
+                setTimeout(() => {
+                    const now = new Date();
+                    const timeString = `${now.getHours()}:${now.getMinutes()} ${now.getHours() >= 12 ? 'PM' : 'AM'}`;
+                    addActivity(`${timeString} - Just now`, 'User eshwar logged in to the dashboard.');
+                }, 5000);
+            </script>
+        </section>
+
+        <!-- Security Settings Section -->
+        <section class="security-settings">
+            <h2>Security Settings</h2>
+            <div class="card">
+                <p><a href="change-password.html">Change Password</a></p>
+                <p><a href="2fa.html">Manage Two-Factor Authentication (2FA)</a></p>
+                <p><a href="active-sessions.html">View Active Sessions</a></p>
+            </div>
+        </section>
+
+        <!-- Notifications Section -->
+        <section class="notifications">
+            <h2>Notifications</h2>
+            <div class="card">
+                <p><strong>Security Alert:</strong> Unusual login attempt detected on August 29, 2024.</p>
+                <p><strong>Update:</strong> Service maintenance scheduled for September 2, 2024.</p>
+            </div>
+        </section>
+
+        <!-- Footer Section -->
+        <footer>
+            <p>&copy; 2024 Secure Hashed Identity Message Authentication. All rights reserved.</p>
+            <p><a href="privacy-policy.html">Privacy Policy</a> | <a href="terms-of-service.html">Terms of Service</a></p>
+        </footer>
+
+        <!-- SHIMA Code Modal -->
+        <div id="shimaModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>SHIMA Code</h2>
+                <p id="modalHmacMessage"></p>
+            </div>
+        </div>
+
+        <script>
+            function generateHMAC() {
+                var message = document.getElementById("message").value;
+                var key = document.getElementById("key").value;
+                var hmac = CryptoJS.HmacSHA256(message, key).toString();
+                
+                // Update the modal content
+                document.getElementById("modalHmacMessage").innerText = hmac;
+
+                // Show the modal
+                var modal = document.getElementById("shimaModal");
+                modal.style.display = "block";
+                
+                // Close the modal when the user clicks on <span> (x)
+                var span = document.getElementsByClassName("close")[0];
+                span.onclick = function() {
+                    modal.style.display = "none";
+                }
+
+                // Close the modal when the user clicks anywhere outside of the modal
+                window.onclick = function(event) {
+                    if (event.target == modal) {
+                        modal.style.display = "none";
+                    }
+                }
+            }
+
+            function verifyHMAC() {
+                var receivedMessage = document.getElementById("receivedMessage").value;
+                var receivedKey = document.getElementById("receivedKey").value;
+                var receivedHMAC = document.getElementById("receivedHMAC").value;
+                var recalculatedHMAC = CryptoJS.HmacSHA256(receivedMessage, receivedKey).toString();
+
+                var resultElement = document.getElementById("verificationResult");
+
+                if (recalculatedHMAC === receivedHMAC) {
+                    resultElement.innerText = "SHIMA verification successful.";
+                    resultElement.className = "verification-result success";
+                } else {
+                    resultElement.innerText = "SHIMA verification failed.";
+                    resultElement.className = "verification-result failure";
+                }
+            }
+        </script>
+    </div>
+</body>
+</html>

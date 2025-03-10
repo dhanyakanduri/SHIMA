@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Secure Hashed Identity Message Authentication</title>
+    <link rel="stylesheet" href="stylesabout.css">
+</head>
+<body>
+    <div class="container">
+        <h1 style="color:  #007bff;">About Secure Hashed Identity Message Authentication</h1>
+        <p>
+            Secure Hashed Identity Message Authentication (SHIMA) is a web-based authentication system designed to enhance the security of online platforms by leveraging modern cryptographic techniques. The system securely processes and verifies user credentials using hashing algorithms to ensure that sensitive data, such as passwords, are never stored in plaintext and cannot be easily compromised.
+        </p>
+
+        <h2>Project Overview</h2>
+        <p>
+            This project aims to implement a robust, secure authentication mechanism where users can log in using their username and password. These credentials are hashed and securely transmitted to the server for validation. The use of hashing algorithms ensures that even if the system is compromised, the stored passwords remain protected.
+        </p>
+
+        <h2>Key Features</h2>
+        <ul>
+            <li><strong>Username and Password Authentication:</strong> Users provide their username and password to authenticate securely.</li>
+            <li><strong>Hashing for Security:</strong> Passwords are hashed using secure algorithms like SHA-256 before being transmitted to the server.</li>
+            <li><strong>Message Authentication:</strong> Ensures data integrity during communication by hashing the data payload.</li>
+            <li><strong>Data Privacy:</strong> No sensitive information, like raw passwords, is stored in the database.</li>
+        </ul>
+
+        <h2>How It Works</h2>
+        <p>
+            When a user logs into the system, their password is immediately hashed on the client side before it is sent to the server. The server then compares this hashed password with the hashed version stored in the database. If the hashes match, the user is authenticated successfully.
+        </p>
+        <p>
+            In addition to hashed passwords, we also incorporate Message Authentication Codes (MAC) to validate that the login data has not been tampered with in transit. This provides an additional layer of security against man-in-the-middle attacks.
+        </p>
+
+        <h2>Technologies Used</h2>
+        <ul>
+            <li><strong>HTML5 & CSS3:</strong> For creating a responsive and user-friendly interface.</li>
+            <li><strong>JavaScript:</strong> For client-side hashing and form validation.</li>
+            <li><strong>PHP:</strong> For server-side authentication and redirection.</li>
+            <li><strong>OpenSSL:</strong> For cryptographic functions such as hashing.</li>
+            <li><strong>SQL:</strong> For secure data storage of user credentials.</li>
+        </ul>
+
+        <h2>Future Enhancements</h2>
+        <ul>
+            <li>Multi-factor authentication for improved security.</li>
+            <li>Integration with OAuth 2.0 for third-party authentication providers.</li>
+            <li>Implementation of session-based token systems for improved session management.</li>
+        </ul>
+
+        <p><a href="index.html">Back to Home</a></p>
+    </div>
+</body>
+</html>
